@@ -44,9 +44,10 @@
                         </span>
                     @endif
 
-                    <button class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs rounded-xl transition flex items-center gap-2">
+                    <a href="{{ route('admin.escaleta.show', ['fecha' => $fecha, 'programa' => 'Revista']) }}" 
+                       class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs rounded-xl transition flex items-center gap-2">
                         Ingresar <i class="fa-solid fa-chevron-right"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -71,9 +72,10 @@
                         </span>
                     @endif
 
-                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-xl transition flex items-center gap-2">
+                    <a href="{{ route('admin.escaleta.show', ['fecha' => $fecha, 'programa' => 'Noticiero Meridiano']) }}" 
+                       class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-xl transition flex items-center gap-2">
                         Ingresar <i class="fa-solid fa-chevron-right"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -98,9 +100,10 @@
                         </span>
                     @endif
 
-                    <button class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-xl transition flex items-center gap-2">
+                    <a href="{{ route('admin.escaleta.show', ['fecha' => $fecha, 'programa' => 'Noticiero Central']) }}" 
+                       class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-xl transition flex items-center gap-2">
                         Ingresar <i class="fa-solid fa-chevron-right"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
 

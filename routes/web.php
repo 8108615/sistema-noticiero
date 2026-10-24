@@ -31,7 +31,14 @@ Route::get('/admin/usuario/{id}/edit', [App\Http\Controllers\UsuarioController::
 Route::put('/admin/usuario/{id}', [App\Http\Controllers\UsuarioController::class, 'update'])->name('admin.usuarios.update')->middleware('auth');
 Route::delete('/admin/usuario/{id}', [App\Http\Controllers\UsuarioController::class, 'destroy'])->name('admin.usuarios.destroy')->middleware('auth');
 
-// Ruta para elegir programa según la fecha del calendario
+// Ruta para escaleta
 Route::get('/admin/escaleta/{fecha}', [App\Http\Controllers\EscaletaController::class, 'seleccionarPrograma'])->name('admin.escaleta.programa')->middleware('auth');
+Route::get('/admin/escaleta/{fecha}/{programa}', [App\Http\Controllers\EscaletaController::class, 'show'])->name('admin.escaleta.show')->middleware('auth');
+Route::get('/admin/escaleta/{escaleta_id}/nota/create', [App\Http\Controllers\EscaletaController::class, 'createNota'])->name('admin.escaleta.nota.create')->middleware('auth');
+Route::post('/admin/escaleta/nota/store', [App\Http\Controllers\EscaletaController::class, 'storeNota'])->name('admin.escaleta.nota.store')->middleware('auth');
+Route::get('/admin/escaleta/nota/{id}', [App\Http\Controllers\EscaletaController::class, 'showNota'])->name('admin.escaleta.nota.show')->middleware('auth');
+Route::get('/admin/escaleta/nota/{id}/edit', [App\Http\Controllers\EscaletaController::class, 'editNota'])->name('admin.escaleta.nota.edit')->middleware('auth');
+Route::put('/admin/escaleta/nota/{id}', [App\Http\Controllers\EscaletaController::class, 'updateNota'])->name('admin.escaleta.nota.update')->middleware('auth');
+Route::delete('/admin/escaleta/nota/{id}', [App\Http\Controllers\EscaletaController::class, 'destroyNota'])->name('admin.escaleta.nota.destroy')->middleware('auth');
 
 require __DIR__.'/settings.php';
