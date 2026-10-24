@@ -44,11 +44,15 @@ class EscaletaController extends Controller
             'nro_nota' => 'required|integer',
             'tipo_nota' => 'required|in:CUÑA,V.O.,F.V.,Nota,Deportes,Entrevista',
             'nombre_nota' => 'required|string|max:255',
+            'periodista' => 'required|string|max:255',
             'titulo' => 'required|string|max:255',
             'redaccion' => 'nullable|string',
         ]);
 
-        $nota = NotaEscaleta::create($request->all());
+        $data = $request->all();
+        $data['user_id'] = auth()->id(); // Asigna el usuario logueado automáticamente
+
+        $nota = NotaEscaleta::create($data);
         $escaleta = $nota->escaleta;
 
         return redirect()->route('admin.escaleta.show', ['fecha' => $escaleta->fecha, 'programa' => $escaleta->programa])
@@ -79,6 +83,7 @@ class EscaletaController extends Controller
             'nro_nota' => 'required|integer',
             'tipo_nota' => 'required|in:CUÑA,V.O.,F.V.,Nota,Deportes,Entrevista',
             'nombre_nota' => 'required|string|max:255',
+            'periodista' => 'required|string|max:255',
             'titulo' => 'required|string|max:255',
             'redaccion' => 'nullable|string',
         ]);

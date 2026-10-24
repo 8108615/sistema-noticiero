@@ -13,19 +13,24 @@ class NotaEscaleta extends Model
 
     protected $fillable = [
         'escaleta_id',
+        'user_id',
         'nro_nota',
         'tipo_nota',
         'nombre_nota',
+        'periodista',
         'titulo',
         'redaccion',
         'orden',
     ];
 
-    /**
-     * Relación: Una nota pertenece a una escaleta
-     */
     public function escaleta()
     {
         return $this->belongsTo(Escaleta::class, 'escaleta_id');
+    }
+
+    // Relación con el usuario que registró la nota
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

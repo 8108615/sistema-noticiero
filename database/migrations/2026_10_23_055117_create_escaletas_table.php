@@ -24,9 +24,11 @@ return new class extends Migration
         Schema::create('notas_escaleta', function (Blueprint $table) {
             $table->id();
             $table->foreignId('escaleta_id')->constrained('escaletas')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->integer('nro_nota'); // Nro Nota
             $table->enum('tipo_nota', ['CUÑA', 'V.O.', 'F.V.', 'Nota', 'Deportes', 'Entrevista']);
             $table->string('nombre_nota'); // Nombre de la Nota
+            $table->string('periodista')->nullable(); // Nombre del Periodista
             $table->string('titulo'); // Titulo que sale en pantalla (GC / Zócalo)
             $table->longText('redaccion')->nullable(); // Guion o texto de la noticia
             $table->integer('orden')->default(0);

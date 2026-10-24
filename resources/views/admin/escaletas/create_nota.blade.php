@@ -40,22 +40,38 @@
                     </div>
                 </div>
 
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Periodista -->
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-400 mb-1">Periodista / Redactor *</label>
+                        <input type="text" name="periodista" placeholder="Ej: Juan Pérez" value="{{ old('periodista') }}" required
+                            class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+
+                    <!-- Usuario en Sesión (Solo lectura) -->
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-400 mb-1">Registrado por (Usuario actual)</label>
+                        <input type="text" value="{{ auth()->user()->name }}" disabled
+                            class="w-full bg-zinc-800/50 border border-zinc-700/50 rounded-xl px-3 py-2 text-zinc-400 text-sm cursor-not-allowed">
+                    </div>
+                </div>
+
                 <div>
                     <label class="block text-xs font-medium text-zinc-400 mb-1">Nombre de la Nota *</label>
-                    <input type="text" name="nombre_nota" placeholder="Ej: Operativos de control de precios" required
+                    <input type="text" name="nombre_nota" placeholder="Ej: Operativos de control de precios" value="{{ old('nombre_nota') }}" required
                         class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500">
                 </div>
 
                 <div>
                     <label class="block text-xs font-medium text-zinc-400 mb-1">Título (Zócalo / GC) *</label>
-                    <input type="text" name="titulo" placeholder="Ej: INTENSIFICAN CONTROLES EN MERCADOS" required
+                    <input type="text" name="titulo" placeholder="Ej: INTENSIFICAN CONTROLES EN MERCADOS" value="{{ old('titulo') }}" required
                         class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500">
                 </div>
 
                 <div>
                     <label class="block text-xs font-medium text-zinc-400 mb-1">Redacción / Guion</label>
                     <textarea name="redaccion" rows="6" placeholder="Escribe aquí el guion o texto de la noticia..."
-                        class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500"></textarea>
+                        class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500">{{ old('redaccion') }}</textarea>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-3 border-t border-zinc-800">
