@@ -50,7 +50,12 @@ class EscaletaController extends Controller
         ]);
 
         $data = $request->all();
-        $data['user_id'] = auth()->id(); // Asigna el usuario logueado automáticamente
+        $data['user_id'] = auth()->id();
+
+        // Forzar mayúsculas en los campos solicitados
+        $data['periodista'] = mb_strtoupper($request->periodista, 'UTF-8');
+        $data['nombre_nota'] = mb_strtoupper($request->nombre_nota, 'UTF-8');
+        $data['titulo'] = mb_strtoupper($request->titulo, 'UTF-8');
 
         $nota = NotaEscaleta::create($data);
         $escaleta = $nota->escaleta;
@@ -88,7 +93,14 @@ class EscaletaController extends Controller
             'redaccion' => 'nullable|string',
         ]);
 
-        $nota->update($request->all());
+        $data = $request->all();
+
+        // Forzar mayúsculas también al actualizar
+        $data['periodista'] = mb_strtoupper($request->periodista, 'UTF-8');
+        $data['nombre_nota'] = mb_strtoupper($request->nombre_nota, 'UTF-8');
+        $data['titulo'] = mb_strtoupper($request->titulo, 'UTF-8');
+
+        $nota->update($data);
         $escaleta = $nota->escaleta;
 
         return redirect()->route('admin.escaleta.show', ['fecha' => $escaleta->fecha, 'programa' => $escaleta->programa])

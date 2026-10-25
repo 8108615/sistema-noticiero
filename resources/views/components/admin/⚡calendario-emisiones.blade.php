@@ -2,6 +2,7 @@
 
 use Livewire\Component;
 use Carbon\Carbon;
+use App\Models\Escaleta;
 
 new class extends Component {
     public $year;
@@ -10,10 +11,9 @@ new class extends Component {
 
     public function mount()
     {
-        // Inicializamos con el año y mes actual
         $this->year = Carbon::now()->year;
         $this->month = Carbon::now()->month;
-        $this->selectedDate = Carbon::now()->toDateString(); // Fecha de hoy por defecto
+        $this->selectedDate = Carbon::now()->toDateString();
     }
 
     public function nextMonth()
@@ -35,49 +35,54 @@ new class extends Component {
         $this->selectedDate = $dateString;
     }
 
-    // Pasamos variables a la vista con el método with() de Volt
     public function with(): array
     {
         $startOfMonth = Carbon::create($this->year, $this->month, 1);
         $daysInMonth = $startOfMonth->daysInMonth;
-        $startDayOfWeek = $startOfMonth->dayOfWeekIso; // 1 (Lunes) a 7 (Domingo)
+        $startDayOfWeek = $startOfMonth->dayOfWeekIso; // 1 (Lun) a 7 (Dom)
 
-        // Configuramos idioma en español para el mes
         Carbon::setLocale('es');
-        $monthName = ucfirst(Carbon::create($this->year, $this->month, 1)->translatedFormat('F Y'));
+        $monthName = mb_strtoupper(Carbon::create($this->year, $this->month, 1)->translatedFormat('F Y'), 'UTF-8');
+
+        // Obtenemos las fechas de este mes que tienen al menos 1 escaleta creada
+        $fechasConEscaleta = Escaleta::whereYear('fecha', $this->year)
+            ->whereMonth('fecha', $this->month)
+            ->pluck('fecha')
+            ->toArray();
 
         return [
             'daysInMonth' => $daysInMonth,
             'startDayOfWeek' => $startDayOfWeek,
             'monthName' => $monthName,
             'currentToday' => Carbon::now()->toDateString(),
+            'fechasConEscaleta' => $fechasConEscaleta,
         ];
     }
 };
 ?>
 
-<div class="p-6 bg-zinc-900 text-zinc-100 rounded-xl shadow-xl border border-zinc-800">
+<div class="p-6 bg-zinc-900/90 text-zinc-100 rounded-2xl shadow-2xl border border-zinc-800 space-y-6">
     <!-- Cabecera del Calendario -->
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold uppercase tracking-wider text-amber-500">
-            <i class="fa-solid fa-calendar-days mr-2"></i> {{ $monthName }}
+    <div class="flex items-center justify-between pb-2 border-b border-zinc-800/60">
+        <h2 class="text-xl font-extrabold tracking-wider text-amber-500 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-days text-amber-500"></i> {{ $monthName }}
         </h2>
 
         <div class="flex items-center space-x-2">
-            <button wire:click="prevMonth" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg transition border border-zinc-700">
+            <button wire:click="prevMonth" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg transition border border-zinc-700/80 text-sm">
                 <i class="fa-solid fa-chevron-left"></i>
             </button>
-            <button wire:click="mount" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition">
+            <button wire:click="mount" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition shadow-md">
                 Hoy
             </button>
-            <button wire:click="nextMonth" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg transition border border-zinc-700">
+            <button wire:click="nextMonth" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg transition border border-zinc-700/80 text-sm">
                 <i class="fa-solid fa-chevron-right"></i>
             </button>
         </div>
     </div>
 
-    <!-- Días de la semana -->
-    <div class="grid grid-cols-7 gap-2 text-center font-semibold text-zinc-400 text-sm mb-3">
+    <!-- Nombres de los días de la semana -->
+    <div class="grid grid-cols-7 gap-2 text-center font-medium text-zinc-400 text-xs uppercase tracking-wider">
         <div>Lun</div>
         <div>Mar</div>
         <div>Mié</div>
@@ -87,46 +92,81 @@ new class extends Component {
         <div>Dom</div>
     </div>
 
-    <!-- Grilla de días -->
+    <!-- Grilla principal de días -->
     <div class="grid grid-cols-7 gap-2">
-        <!-- Espacios vacíos antes del primer día del mes -->
+        <!-- Relleno de espacios vacíos previos al 1er día -->
         @for ($i = 1; $i < $startDayOfWeek; $i++)
-            <div></div>
+            <div class="h-16"></div>
         @endfor
 
-        <!-- Días del mes -->
+        <!-- Renderizado de días del mes -->
         @for ($day = 1; $day <= $daysInMonth; $day++)
             @php
                 $dateString = \Carbon\Carbon::create($year, $month, $day)->toDateString();
                 $isToday = $dateString === $currentToday;
                 $isSelected = $dateString === $selectedDate;
+                $tieneEscaleta = in_array($dateString, $fechasConEscaleta);
             @endphp
 
             <button wire:click="selectDate('{{ $dateString }}')"
                 @dblclick="window.location.href = '{{ route('admin.escaleta.programa', $dateString) }}'"
-                title="Haz doble clic para abrir los programas de esta fecha"
-                class="h-14 flex flex-col items-center justify-center rounded-xl border transition relative select-none
-                {{ $isSelected ? 'bg-amber-600 border-amber-500 text-white shadow-lg' : 'bg-zinc-800/50 border-zinc-700/60 hover:bg-zinc-800 text-zinc-300' }}
-                {{ $isToday && !$isSelected ? 'ring-2 ring-blue-500' : '' }}">
+                title="Haz clic para seleccionar o doble clic para abrir los programas"
+                class="h-16 flex flex-col items-center justify-center rounded-xl border transition relative select-none group
+                {{ $isSelected && $isToday ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/30 font-bold' : '' }}
+                {{ $isSelected && !$isToday ? 'bg-blue-600/30 border-blue-500 text-white shadow-md font-bold' : '' }}
+                {{ !$isSelected && $isToday ? 'bg-zinc-800/80 border-blue-500/80 text-white font-semibold' : '' }}
+                {{ !$isSelected && !$isToday ? 'bg-zinc-800/40 border-zinc-800/80 hover:bg-zinc-800 text-zinc-300 hover:border-zinc-700' : '' }}">
 
-                <span class="text-base font-bold">{{ $day }}</span>
+                <span class="text-base {{ $isSelected ? 'font-black' : 'font-semibold' }}">{{ $day }}</span>
 
                 @if($isToday)
-                    <span class="absolute bottom-1 text-[9px] uppercase tracking-tighter bg-blue-500/20 text-blue-400 px-1 rounded">Hoy</span>
+                    <span class="text-[9px] font-bold uppercase tracking-tighter mt-0.5 opacity-90">HOY</span>
                 @endif
+
+                <!-- Puntos indicativos en la esquina de cada celda -->
+                <div class="absolute bottom-1.5 right-2 flex items-center gap-1">
+                    @if($tieneEscaleta)
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-sm" title="Emisión programada"></span>
+                    @endif
+                    @if($isSelected && !$isToday)
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-sm" title="Fecha seleccionada"></span>
+                    @endif
+                </div>
             </button>
         @endfor
     </div>
 
-    <!-- Indicador de la fecha seleccionada -->
-    <div class="mt-6 p-4 bg-zinc-800/80 rounded-xl border border-zinc-700 flex items-center justify-between">
-        <div>
-            <span class="text-xs text-zinc-400 block">Fecha seleccionada para emisión:</span>
-            <span class="text-lg font-bold text-white">{{ $selectedDate }}</span>
+    <!-- Barra Inferior de Acción y Leyendas -->
+    <div class="space-y-3 pt-2">
+        <div class="p-4 bg-zinc-800/50 rounded-xl border border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-blue-500/10 text-blue-400 rounded-lg text-lg">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <div>
+                    <span class="text-[11px] text-zinc-400 block uppercase tracking-wider font-medium">Fecha seleccionada para emisión:</span>
+                    <span class="text-base font-bold text-white font-mono">{{ $selectedDate }}</span>
+                </div>
+            </div>
+
+            <div>
+                <a href="{{ route('admin.escaleta.programa', $selectedDate) }}" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl transition shadow-lg flex items-center gap-2">
+                    Elegir programa <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
         </div>
-        <div class="text-right">
-            <!-- Aquí luego colocaremos los botones para seleccionar el Noticiero (Revista, Meridiano, Central) -->
-            <span class="text-xs text-amber-400 font-medium">Listo para elegir programa <i class="fa-solid fa-arrow-right ml-1"></i></span>
+
+        <!-- Leyenda / Puntos Informativos -->
+        <div class="flex items-center justify-end gap-5 text-[11px] text-zinc-400 px-1">
+            <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Emisión programada
+            </span>
+            <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span> Fecha seleccionada
+            </span>
+            <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-blue-400 inline-block"></span> Hoy
+            </span>
         </div>
     </div>
 </div>

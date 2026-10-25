@@ -39,12 +39,13 @@
                     </div>
                 </div>
 
-                <!-- Fila 2: Periodista y Usuario Registrador -->
+                <!-- Fila 2: Periodista y Usuario Registrador (Periodista forzado a Mayúsculas) -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-zinc-400 mb-1">Periodista / Redactor *</label>
-                        <input type="text" name="periodista" value="{{ old('periodista', $nota->periodista) }}" placeholder="Ej: Juan Pérez" required
-                            class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500">
+                        <input type="text" name="periodista" value="{{ old('periodista', $nota->periodista) }}" placeholder="Ej: JUAN PÉREZ" required
+                            oninput="this.value = this.value.toUpperCase()"
+                            class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm uppercase focus:outline-none focus:border-emerald-500">
                     </div>
 
                     <div>
@@ -54,18 +55,20 @@
                     </div>
                 </div>
 
-                <!-- Nombre de la Nota -->
+                <!-- Nombre de la Nota (Forzado a Mayúsculas) -->
                 <div>
                     <label class="block text-xs font-medium text-zinc-400 mb-1">Nombre de la Nota *</label>
                     <input type="text" name="nombre_nota" value="{{ old('nombre_nota', $nota->nombre_nota) }}" required
-                        class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500">
+                        oninput="this.value = this.value.toUpperCase()"
+                        class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm uppercase focus:outline-none focus:border-emerald-500">
                 </div>
 
-                <!-- Título / Zócalo -->
+                <!-- Título / Zócalo (Forzado a Mayúsculas) -->
                 <div>
                     <label class="block text-xs font-medium text-zinc-400 mb-1">Título (Zócalo / GC) *</label>
                     <input type="text" name="titulo" value="{{ old('titulo', $nota->titulo) }}" required
-                        class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500">
+                        oninput="this.value = this.value.toUpperCase()"
+                        class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm uppercase focus:outline-none focus:border-emerald-500">
                 </div>
 
                 <!-- Redacción / Guion -->

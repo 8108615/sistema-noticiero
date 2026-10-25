@@ -44,18 +44,18 @@
                         </span>
                     @endif
 
-                    <a href="{{ route('admin.escaleta.show', ['fecha' => $fecha, 'programa' => 'Revista']) }}" 
+                    <a href="{{ route('admin.escaleta.show', ['fecha' => $fecha, 'programa' => 'Revista']) }}"
                        class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs rounded-xl transition flex items-center gap-2">
                         Ingresar <i class="fa-solid fa-chevron-right"></i>
                     </a>
                 </div>
             </div>
 
-            <!-- 2. NOTICIERO MERIDIANO -->
+            <!-- 2. NOTICIERO MERIDIANO (Corregido el icono a fa-sun o fa-clock) -->
             <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col justify-between hover:border-blue-500/50 transition shadow-xl group">
                 <div>
                     <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
-                        <i class="fa-solid fa-clock-three"></i>
+                        <i class="fa-solid fa-clock"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white">Noticiero Meridiano</h3>
                     <p class="text-zinc-400 text-xs mt-2">Emisión del mediodía. Resumen informativo, despacho en vivo y cobertura del momento.</p>
@@ -72,7 +72,7 @@
                         </span>
                     @endif
 
-                    <a href="{{ route('admin.escaleta.show', ['fecha' => $fecha, 'programa' => 'Noticiero Meridiano']) }}" 
+                    <a href="{{ route('admin.escaleta.show', ['fecha' => $fecha, 'programa' => 'Noticiero Meridiano']) }}"
                        class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-xl transition flex items-center gap-2">
                         Ingresar <i class="fa-solid fa-chevron-right"></i>
                     </a>
@@ -100,7 +100,7 @@
                         </span>
                     @endif
 
-                    <a href="{{ route('admin.escaleta.show', ['fecha' => $fecha, 'programa' => 'Noticiero Central']) }}" 
+                    <a href="{{ route('admin.escaleta.show', ['fecha' => $fecha, 'programa' => 'Noticiero Central']) }}"
                        class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-xl transition flex items-center gap-2">
                         Ingresar <i class="fa-solid fa-chevron-right"></i>
                     </a>
