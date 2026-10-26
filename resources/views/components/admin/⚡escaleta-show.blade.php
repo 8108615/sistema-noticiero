@@ -70,7 +70,7 @@ new class extends Component {
                 <i class="fa-solid fa-arrow-left"></i> Cambiar de Programa
             </a>
             <h2 class="text-2xl font-bold text-white flex items-center gap-3">
-                <i class="fa-solid fa-list-check text-amber-500"></i> 
+                <i class="fa-solid fa-list-check text-amber-500"></i>
                 Escaleta: <span class="text-amber-400">{{ $escaleta->programa }}</span>
             </h2>
             <p class="text-xs text-zinc-400 mt-0.5">
@@ -79,7 +79,7 @@ new class extends Component {
         </div>
 
         <div class="flex items-center gap-3">
-            <a href="{{ route('admin.escaleta.nota.create', $escaleta->id) }}" 
+            <a href="{{ route('admin.escaleta.nota.create', $escaleta->id) }}"
                class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm rounded-xl transition shadow-lg flex items-center gap-2">
                 <i class="fa-solid fa-plus"></i> Nueva Nota
             </a>
@@ -88,15 +88,15 @@ new class extends Component {
 
     <!-- Contenedor Principal de la Tabla con Buscador y Paginador -->
     <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-xl space-y-4">
-        
+
         <!-- Barra de Controles Superior -->
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-3 border-b border-zinc-800">
             <div class="relative w-full sm:w-80">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
                 </span>
-                <input wire:model.live.debounce.300ms="search" type="text" 
-                    placeholder="Buscar por nombre, título, periodista..." 
+                <input wire:model.live.debounce.300ms="search" type="text"
+                    placeholder="Buscar por nombre, título, periodista..."
                     class="w-full bg-zinc-800 border border-zinc-700 rounded-xl pl-9 pr-4 py-2 text-white text-xs focus:outline-none focus:border-amber-500 transition">
             </div>
 
@@ -146,7 +146,7 @@ new class extends Component {
                         @foreach($notas as $nota)
                             <tr class="hover:bg-zinc-800/40 transition">
                                 <td class="px-3 py-3 font-bold text-amber-400">#{{ $nota->nro_nota }}</td>
-                                
+
                                 <td class="px-3 py-3">
                                     <span class="px-2 py-0.5 text-[10px] font-bold rounded uppercase
                                         {{ $nota->tipo_nota === 'CUÑA' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : '' }}
@@ -189,8 +189,15 @@ new class extends Component {
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
 
+                                        <!-- CLONAR / DUPLICAR -->
+                                        <button type="button"
+                                            onclick="abrirModalClonar({{ $nota->id }}, '{{ addslashes($nota->nombre_nota) }}', '{{ $escaleta->fecha }}')"
+                                            class="p-2 bg-purple-500/10 text-purple-400 hover:bg-purple-500 hover:text-white rounded-lg transition" title="Clonar Nota a otra fecha u otro programa">
+                                            <i class="fa-solid fa-clone"></i>
+                                        </button>
+
                                         <!-- ELIMINAR Directo con función JavaScript -->
-                                        <button type="button" 
+                                        <button type="button"
                                             onclick="confirmarEliminacion({{ $nota->id }}, '{{ addslashes($nota->nombre_nota) }}')"
                                             class="p-2 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition" title="Eliminar Nota">
                                             <i class="fa-solid fa-trash-can"></i>
@@ -234,6 +241,55 @@ new class extends Component {
                 }
             });
         }
+
+        function abrirModalClonar(id, nombreNota, fechaActual) {
+        Swal.fire({
+            title: '<span class="text-white text-lg font-bold">Clonar Nota</span>',
+            html: `
+                <div class="text-left space-y-4 mt-2">
+                    <p class="text-xs text-zinc-300">Nota a clonar: <strong class="text-amber-400">"${nombreNota}"</strong></p>
+
+                    <form id="formClonar" action="/admin/escaleta/nota/clonar/${id}" method="POST">
+                        <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}'}">
+
+                        <div class="mb-3">
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Fecha de Destino *</label>
+                            <input type="date" id="fecha_destino" name="fecha_destino" value="${fechaActual}" required
+                                class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Programa de Destino *</label>
+                            <select id="programa_destino" name="programa_destino" required
+                                class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500">
+                                <option value="Revista">Revista</option>
+                                <option value="Noticiero Meridiano">Noticiero Meridiano</option>
+                                <option value="Noticiero Central">Noticiero Central</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            `,
+            background: '#18181b', // Fondo zinc-900 oscuro
+            color: '#f4f4f5', // Texto claro
+            showCancelButton: true,
+            confirmButtonColor: '#9333ea', // Morado
+            cancelButtonColor: '#3f3f46', // Gris oscuro para cancelar
+            confirmButtonText: 'Clonar Nota',
+            cancelButtonText: 'Cancelar',
+            preConfirm: () => {
+                const fecha = document.getElementById('fecha_destino').value;
+                if (!fecha) {
+                    Swal.showValidationMessage('Debe seleccionar una fecha de destino');
+                }
+                return { fecha: fecha };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('formClonar').submit();
+            }
+        });
+    }
 
         document.addEventListener('livewire:initialized', () => {
             window.addEventListener('swal', event => {

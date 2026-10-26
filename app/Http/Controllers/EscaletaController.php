@@ -119,4 +119,41 @@ class EscaletaController extends Controller
             ->with('mensaje', 'Nota eliminada correctamente')
             ->with('icono', 'success');
     }
+
+    public function clonarNota(Request $request, $id)
+    {
+        $request->validate([
+            'fecha_destino' => 'required|date',
+            'programa_destino' => 'required|in:Revista,Noticiero Meridiano,Noticiero Central',
+        ]);
+
+        $notaOriginal = NotaEscaleta::findOrFail($id);
+        $escaletaOrigen = $notaOriginal->escaleta; // Guardamos la escaleta actual para volver aquí
+
+        // 1. Buscar o crear la escaleta destino para esa fecha y programa
+        $escaletaDestino = Escaleta::firstOrCreate(
+            ['fecha' => $request->fecha_destino, 'programa' => $request->programa_destino],
+            ['estado' => 'Borrador']
+        );
+
+        // 2. Calcular el siguiente número de nota en la escaleta destino
+        $siguienteNro = $escaletaDestino->notas()->max('nro_nota') + 1;
+
+        // 3. Duplicar la nota
+        NotaEscaleta::create([
+            'escaleta_id' => $escaletaDestino->id,
+            'nro_nota' => $siguienteNro,
+            'tipo_nota' => $notaOriginal->tipo_nota,
+            'nombre_nota' => $notaOriginal->nombre_nota,
+            'periodista' => $notaOriginal->periodista,
+            'titulo' => $notaOriginal->titulo,
+            'redaccion' => $notaOriginal->redaccion,
+            'user_id' => auth()->id(),
+        ]);
+
+        // Redirigir de regreso a la misma escaleta actual
+        return redirect()->route('admin.escaleta.show', ['fecha' => $escaletaOrigen->fecha, 'programa' => $escaletaOrigen->programa])
+            ->with('mensaje', '¡Nota clonada con éxito a ' . $escaletaDestino->programa . ' (' . $escaletaDestino->fecha . ')!')
+            ->with('icono', 'success');
+    }
 }

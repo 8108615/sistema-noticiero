@@ -40,6 +40,8 @@ Route::get('/admin/escaleta/nota/editar/{id}', [App\Http\Controllers\EscaletaCon
 Route::put('/admin/escaleta/nota/actualizar/{id}', [App\Http\Controllers\EscaletaController::class, 'updateNota'])->name('admin.escaleta.nota.update')->middleware('auth');
 Route::delete('/admin/escaleta/nota/eliminar/{id}', [App\Http\Controllers\EscaletaController::class, 'destroyNota'])->name('admin.escaleta.nota.destroy')->middleware('auth');
 
+Route::post('/admin/escaleta/nota/clonar/{id}', [App\Http\Controllers\EscaletaController::class, 'clonarNota'])->name('admin.escaleta.nota.clonar')->middleware('auth');
+
 Route::get('/admin/escaleta/{fecha}', [App\Http\Controllers\EscaletaController::class, 'seleccionarPrograma'])->name('admin.escaleta.programa')->middleware('auth');
 Route::get('/admin/escaleta/{fecha}/{programa}', [App\Http\Controllers\EscaletaController::class, 'show'])->name('admin.escaleta.show')->middleware('auth');
 
