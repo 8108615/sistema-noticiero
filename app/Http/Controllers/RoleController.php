@@ -84,6 +84,30 @@ class RoleController extends Controller
             ->with('icono', 'success');
     }
 
+    public function permisos($id)
+    {
+        $rol = Role::findOrFail($id);
+
+        // Agrupamos o listamos todos los permisos disponibles
+        $permissions = \Spatie\Permission\Models\Permission::all();
+
+        return view('admin.roles.permisos', compact('rol', 'permissions'));
+    }
+
+    // Actualizar los permisos asignados al rol
+    public function updatePermisos(Request $request, $id)
+    {
+        $rol = Role::findOrFail($id);
+
+        // Sincroniza los permisos seleccionados mediante los checkboxes
+        $permissions = $request->input('permissions', []);
+        $rol->syncPermissions($permissions);
+
+        return redirect()->route('admin.roles.index')
+            ->with('mensaje', 'Permisos actualizados correctamente para el rol ' . $rol->name)
+            ->with('icono', 'success');
+    }
+
     /**
      * Remove the specified resource from storage.
      */

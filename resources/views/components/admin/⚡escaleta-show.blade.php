@@ -79,10 +79,12 @@ new class extends Component {
         </div>
 
         <div class="flex items-center gap-3">
-            <a href="{{ route('admin.escaleta.nota.create', $escaleta->id) }}"
-               class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm rounded-xl transition shadow-lg flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Nueva Nota
-            </a>
+            @can('Crear Notas')
+                <a href="{{ route('admin.escaleta.nota.create', $escaleta->id) }}"
+                class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm rounded-xl transition shadow-lg flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Nueva Nota
+                </a>
+            @endcan
         </div>
     </div>
 
@@ -180,28 +182,36 @@ new class extends Component {
                                 <td class="px-3 py-3 text-center">
                                     <div class="flex items-center justify-center gap-2">
                                         <!-- VER -->
-                                        <a href="{{ route('admin.escaleta.nota.show', $nota->id) }}" class="p-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg transition" title="Ver Nota">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </a>
+                                        @can('Ver Calendario y Escaleta')
+                                            <a href="{{ route('admin.escaleta.nota.show', $nota->id) }}" class="p-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg transition" title="Ver Nota">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                        @endcan
 
                                         <!-- EDITAR -->
-                                        <a href="{{ route('admin.escaleta.nota.edit', $nota->id) }}" class="p-2 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white rounded-lg transition" title="Editar Nota">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </a>
+                                        @can('Editar Notas')
+                                            <a href="{{ route('admin.escaleta.nota.edit', $nota->id) }}" class="p-2 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white rounded-lg transition" title="Editar Nota">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </a>
+                                        @endcan
 
                                         <!-- CLONAR / DUPLICAR -->
-                                        <button type="button"
-                                            onclick="abrirModalClonar({{ $nota->id }}, '{{ addslashes($nota->nombre_nota) }}', '{{ $escaleta->fecha }}')"
-                                            class="p-2 bg-purple-500/10 text-purple-400 hover:bg-purple-500 hover:text-white rounded-lg transition" title="Clonar Nota a otra fecha u otro programa">
-                                            <i class="fa-solid fa-clone"></i>
-                                        </button>
+                                        @can('Clonar Notas')
+                                            <button type="button"
+                                                onclick="abrirModalClonar({{ $nota->id }}, '{{ addslashes($nota->nombre_nota) }}', '{{ $escaleta->fecha }}')"
+                                                class="p-2 bg-purple-500/10 text-purple-400 hover:bg-purple-500 hover:text-white rounded-lg transition" title="Clonar Nota a otra fecha u otro programa">
+                                                <i class="fa-solid fa-clone"></i>
+                                            </button>
+                                        @endcan
 
                                         <!-- ELIMINAR Directo con función JavaScript -->
-                                        <button type="button"
-                                            onclick="confirmarEliminacion({{ $nota->id }}, '{{ addslashes($nota->nombre_nota) }}')"
-                                            class="p-2 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition" title="Eliminar Nota">
-                                            <i class="fa-solid fa-trash-can"></i>
-                                        </button>
+                                        @can('Eliminar Notas')
+                                            <button type="button"
+                                                onclick="confirmarEliminacion({{ $nota->id }}, '{{ addslashes($nota->nombre_nota) }}')"
+                                                class="p-2 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition" title="Eliminar Nota">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>

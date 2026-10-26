@@ -150,9 +150,11 @@ new class extends Component {
             </div>
 
             <div>
-                <a href="{{ route('admin.escaleta.programa', $selectedDate) }}" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl transition shadow-lg flex items-center gap-2">
-                    Elegir programa <i class="fa-solid fa-arrow-right"></i>
-                </a>
+                @can('Ver Calendario y Escaleta')
+                    <a href="{{ route('admin.escaleta.programa', $selectedDate) }}" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl transition shadow-lg flex items-center gap-2">
+                        Elegir programa <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                @endcan
             </div>
         </div>
 
